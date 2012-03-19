@@ -44,13 +44,41 @@ END_MESSAGE_MAP()
 
 // CExampleDlg dialog
 
-
-
-
 CExampleDlg::CExampleDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CExampleDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	composer = new ChainComposer(*this);
+}
+
+//virtual
+CExampleDlg::~CExampleDlg()
+{
+	delete composer;
+}
+
+//virtual
+void CExampleDlg::setSelectionList(FilterList& filters)
+{
+	setListBox(IDC_SELECTIONLIST, filters);
+}
+
+//virtual
+void CExampleDlg::setChainList(FilterList& filters)
+{
+	setListBox(IDC_CHAINLIST, filters);
+}
+
+//virtual
+int CExampleDlg::selectionListCount(void) const
+{
+	return getListBox(IDC_SELECTIONLIST)->GetCount();
+}
+
+//virtual
+int CExampleDlg::chainListCount(void) const
+{
+	return getListBox(IDC_CHAINLIST)->GetCount();
 }
 
 void CExampleDlg::DoDataExchange(CDataExchange* pDX)
@@ -58,11 +86,34 @@ void CExampleDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 }
 
+CListBox* CExampleDlg::getListBox(UINT id)
+{
+	CListBox* listBox = (CListBox*)GetDlgItem(id);
+	return listBox;
+}
+
+const CListBox* CExampleDlg::getListBox(UINT id) const
+{
+	CListBox* listBox = (CListBox*)GetDlgItem(id);
+	return listBox;
+}
+
+void CExampleDlg::setListBox(UINT id, FilterList& filters)
+{
+	CListBox* listBox = getListBox(id);
+	listBox->ResetContent();
+
+	for(FilterList::iterator it=filters.begin(); it!=filters.end(); ++it) {
+		listBox->AddString(CString((*it)->getName()));
+	}
+}
+
 BEGIN_MESSAGE_MAP(CExampleDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_BTN_ADD, &CExampleDlg::OnBnClickedBtnAdd)
 END_MESSAGE_MAP()
 
 
@@ -98,6 +149,7 @@ BOOL CExampleDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	composer->initialize();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -151,3 +203,9 @@ HCURSOR CExampleDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CExampleDlg::OnBnClickedBtnAdd()
+{
+	CListBox* listBox = (CListBox*)GetDlgItem(IDC_SELECTIONLIST);
+	composer->add(	listBox->GetCurSel() );
+}

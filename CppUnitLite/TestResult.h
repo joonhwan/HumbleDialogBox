@@ -21,7 +21,7 @@ public:
 	virtual void	testsStarted ();
 	virtual void	addFailure (const Failure& failure);
 	virtual void	testsEnded ();
-
+	int getFailureCount(void) const;
 private:
 	int				failureCount;
 };

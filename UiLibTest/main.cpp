@@ -1,19 +1,11 @@
-// ExampleTest.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
-#include "ExampleTest.h"
+#include "TestHarness.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-
-// The one and only application object
-
 CWinApp theApp;
-
-using namespace std;
 
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
@@ -28,7 +20,9 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 	}
 	else
 	{
-		// TODO: code your application's behavior here.
+		TestResult tr;
+		TestRegistry::runAllTests(tr);
+		nRetCode = tr.getFailureCount();
 	}
 
 	return nRetCode;

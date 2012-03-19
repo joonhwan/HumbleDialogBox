@@ -1,4 +1,3 @@
-
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 PROJECT(HumbleDialog)
@@ -7,7 +6,9 @@ PROJECT(HumbleDialog)
 # MFC configuration
 # 
 ADD_DEFINITIONS(-D_AFXDLL)
-ADD_DEFINITIONS(-DUNICODE -D_UNICODE)
+ADD_DEFINITIONS(-DUNICODE)
+ADD_DEFINITIONS(-D_UNICODE)
+ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
 SET(CMAKE_MFC_FLAG 2)
 # not really needed but explicitly...
 SET(MFC_LIBRARIES 
@@ -16,25 +17,30 @@ SET(MFC_LIBRARIES
 
 # PCH support
 SET(MSVC_PCH_PREFIX "")
-MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
+MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
   GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
   # set(PrecompiledBinary "$(IntDir)/$(TargetName).pch")
   SET(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PROJECT_NAME}.pch")
   SET(Sources ${${SourcesVar}})
   
   SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
-    PROPERTIES COMPILE_FLAGS "/Yc"${PrecompiledHeader}" /Fp"${PrecompiledBinary}""
+    PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
     OBJECT_OUTPUTS "${PrecompiledBinary}")
   SET_SOURCE_FILES_PROPERTIES(${Sources}
-    PROPERTIES COMPILE_FLAGS "/Yu"${PrecompiledHeader}" /FI"${PrecompiledBinary}" /Fp"${PrecompiledBinary}""
+    PROPERTIES COMPILE_FLAGS "/Yu\"${PrecompiledHeader}\" /FI\"${PrecompiledBinary}\" /Fp\"${PrecompiledBinary}\""
     OBJECT_DEPENDS "${PrecompiledBinary}")
   # Add precompiled header to SourcesVar
   LIST(APPEND ${SourcesVar} ${PrecompiledSource})
   SET(MSVC_PCH_PREFIX "")
-ENDMACRO(add_msvc_precompiled_header)
+ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
 
-INCLUDE_DIRECTORY(${CMAKE_SOURCE_DIR}/CppUnitLite)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/CppUnitLite)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/UiLib)
+
+ENABLE_TESTING()
 
 ADD_SUBDIRECTORY(CppUnitLite)
+ADD_SUBDIRECTORY(UiLib)
+ADD_SUBDIRECTORY(UiLibTest)
 ADD_SUBDIRECTORY(Example)
-ADD_SUBDIRECTORY(ExampleTest)
+

@@ -1,0 +1,34 @@
+ENABLE_TESTING()
+
+PROJECT(UiLibTest)
+
+set(${PROJECT_NAME}_CPP
+  main.cpp
+  ChainComposerTest.cpp
+  )
+
+set(${PROJECT_NAME}_H
+  stdafx.h
+  targetver.h
+  )
+
+ADD_MSVC_PRECOMPILED_HEADER("stdafx.h" "stdafx.cpp" ${PROJECT_NAME}_CPP)
+
+ADD_EXECUTABLE(${PROJECT_NAME}
+  ${${PROJECT_NAME}_CPP}
+  ${${PROJECT_NAME}_H}
+)  
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+  ${MFC_LIBRARIES}
+  CppUnitLite
+  UiLib
+  )
+
+ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
+  POST_BUILD
+  COMMAND ${PROJECT_NAME}
+  COMMENT "testing ${PROJECT_NAME} ..."
+  )
+
+ADD_TEST(${PROJECT_NAME} ${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME})
